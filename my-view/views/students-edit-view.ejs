@@ -1,0 +1,113 @@
+<% include partials/header %>
+<% include ../public/js/main.js %>
+<script type="text/javascript">
+    function showMe(){
+    document.getElementById("myChart").style.visibility = "visible";
+    document.getElementById("avgPass").style.visibility = "visible";
+
+}
+// $('#graphBtn').click(function(){
+//       alert("Hi");
+//       $("#graphB").append("<canvas id="myChart"></canvas>");
+//  });
+</script>
+<% for(var i=0; i < foundStudent.length; i++) { %>
+<div class="container" >
+	<h5><%= foundStudent[i].NAME %> | REGNO:  <%= foundStudent[i].REGNO %> |  BATCH: <%= foundStudent[i].BATCH %></h5>
+	<table class="table table-bordered">
+ 		<tr>
+ 			<th>Subject </th>
+ 			<th>Grade</th>
+            <th>Action <%= foundStudent.subject %></th>
+ 		</tr>
+ 		
+ 		<%  var entry;
+			var name;
+			entry = foundStudent[i].SEM1;
+            
+			for(name in entry){ %>
+
+				<tr>
+				<td><%= name %>:</td> <% 
+				if (entry.hasOwnProperty(name)) {
+				    var val = entry[name];
+				    
+				  }
+				 if(name == foundStudent.subject){ %>
+                    <form method="POST" action="/staff-mark-view/student-grade-change">
+                         <td>
+                            <input type="hidden" class="form-control" value="<%= foundStudent[i]._id %>" name="changeId"></input>
+                            <input type="hidden" class="form-control" value="<%= name %>" name="changeSub"></input>
+                            <input type="hidden" class="form-control" value="SEM1" name="changeSem"></input>
+                            <input id="semGrade" type="text" class="form-control" value="<%= val %>" name="changeGrade"></input>
+                         </td>
+                         <td style="text-align: center;">
+                            <button class="btn btn-default">Submit</button>
+                         </td>
+                     </form>
+                 <% }else{ %>
+                        <td> <input type="text" value="<%= val %>" id="semGrade" class="form-control" disabled></td>
+                        <td></td>
+                 <% } %>
+                  
+                 
+				 </tr>
+			<% 
+            
+        } %>
+	</table>
+
+</div>
+<% } %>
+<div class="container" id="graphB">
+	<button class="btn btn-success" onclick="showMe()" id="graphBtn">Show Graph</button disabled> 
+    <canvas id="myChart" style="visibility: hidden;"></canvas>
+    <p id="avgPass" style="visibility: hidden;">Woah !, The Average Pass percentage is : <strong id="passPerc"></strong></p>
+
+</div>
+<script>
+function readySet(){
+var ctx = document.getElementById("myChart");
+ctx.height = 90;
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ["S", "A", "B", "C", "D", "E", "RA"],
+        datasets: [{
+            label: 'Number of Grades',
+            data: [sGradeCheck, aGradeCheck, bGradeCheck, cGradeCheck, dGradeCheck, eGradeCheck, uGradeCheck],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255,99,132,1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+});
+document.getElementById("passPerc").innerHTML = Math.round(avgPassPercentage)+" %";
+}
+</script>
+</div>
